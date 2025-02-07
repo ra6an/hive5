@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: hive5_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ra6an
+      POSTGRES_PASSWORD: l4gkR4sd6kK4l12aS
+      POSTGRES_DB: hive5_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
