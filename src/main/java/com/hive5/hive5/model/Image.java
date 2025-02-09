@@ -1,5 +1,6 @@
 package com.hive5.hive5.model;
 
+import com.hive5.hive5.model.enums.ImageStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,15 +25,15 @@ public class Image {
     @Column(length = 500)
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    private User user;
 
-    @OneToMany(mappedBy = "image", cascade = CascadeType.PERSIST)
-    private List<Comment> comments;
+//    @OneToMany(mappedBy = "image", cascade = CascadeType.PERSIST)
+//    private List<Comment> comments;
 
-    @OneToMany(mappedBy = "image", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Like> likes;
+//    @OneToMany(mappedBy = "image", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Like> likes;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

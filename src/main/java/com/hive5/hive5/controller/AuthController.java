@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Map;
 
 @RestController
@@ -31,7 +32,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/signin")
     public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest loginRequest) {
         Map<String, Object> data = authService.login(loginRequest);
 

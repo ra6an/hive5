@@ -1,8 +1,8 @@
 package com.hive5.hive5.model;
 
+import com.hive5.hive5.model.enums.FriendRequestStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 

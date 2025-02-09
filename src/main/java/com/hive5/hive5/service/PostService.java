@@ -5,7 +5,7 @@ import com.hive5.hive5.dto.Post.PostDTO;
 import com.hive5.hive5.exception.CustomException;
 import com.hive5.hive5.exception.InvalidStatusException;
 import com.hive5.hive5.model.Post;
-import com.hive5.hive5.model.PostStatus;
+import com.hive5.hive5.model.enums.PostStatus;
 import com.hive5.hive5.model.User;
 import com.hive5.hive5.repository.PostRepository;
 import com.hive5.hive5.repository.UserRepository;
@@ -13,11 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.swing.text.html.Option;
 import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

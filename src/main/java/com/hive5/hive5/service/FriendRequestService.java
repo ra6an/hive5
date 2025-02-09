@@ -1,7 +1,7 @@
 package com.hive5.hive5.service;
 
 import com.hive5.hive5.model.FriendRequest;
-import com.hive5.hive5.model.FriendRequestStatus;
+import com.hive5.hive5.model.enums.FriendRequestStatus;
 import com.hive5.hive5.model.User;
 import com.hive5.hive5.repository.FriendRequestRepository;
 import lombok.RequiredArgsConstructor;

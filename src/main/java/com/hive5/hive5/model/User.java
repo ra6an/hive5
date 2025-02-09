@@ -1,5 +1,6 @@
 package com.hive5.hive5.model;
 
+import com.hive5.hive5.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import net.minidev.json.annotate.JsonIgnore;
@@ -36,14 +37,14 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Boolean enabled;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST)
-    private Image profileImage;
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+//    private Post profileImage;
+//
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+//    private Post coverImage;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST)
-    private Image coverImage;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
-    private List<Image> images;
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+//    private List<Post> images;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Post> posts;

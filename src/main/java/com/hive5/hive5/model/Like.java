@@ -22,8 +22,8 @@ public class Like {
     private Post post;
 
     @ManyToOne
-    @JoinColumn(name = "image_id")
-    private Image image;
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -31,8 +31,6 @@ public class Like {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-//    @Column(name = "updated_at")
-//    private  LocalDateTime updatedAt;
 
     @PrePersist
     public void prePersist() {

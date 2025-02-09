@@ -1,9 +1,11 @@
 package com.hive5.hive5.model;
 
+import com.hive5.hive5.model.enums.CommentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,10 +23,6 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
-
-    @ManyToOne
-    @JoinColumn(name = "image_id")
-    private Image image;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -51,6 +49,9 @@ public class Comment {
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> replies;
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CommentStatus status;
@@ -59,6 +60,9 @@ public class Comment {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.edited = false;
+        this.status = CommentStatus.ACTIVE;
+        this.replies = new ArrayList<>();
+        this.likes = new ArrayList<>();
     }
 
     @PreUpdate

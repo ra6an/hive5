@@ -1,4 +1,4 @@
-package com.hive5.hive5.model;
+package com.hive5.hive5.model.enums;
 
 public enum PostStatus {
     PUBLIC,

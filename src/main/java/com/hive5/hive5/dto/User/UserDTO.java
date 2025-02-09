@@ -1,7 +1,7 @@
 package com.hive5.hive5.dto.User;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.hive5.hive5.model.Role;
+import com.hive5.hive5.model.enums.Role;
 import com.hive5.hive5.model.User;
 import lombok.*;
 

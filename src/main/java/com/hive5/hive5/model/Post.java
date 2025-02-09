@@ -1,11 +1,12 @@
 package com.hive5.hive5.model;
 
+import com.hive5.hive5.model.enums.PostStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "posts")
@@ -29,6 +30,9 @@ public class Post {
     @Transient
     private String oldContent;
 
+    @Column
+    private String image;
+
     @Column(nullable = false)
     private Boolean edited;
 
@@ -50,6 +54,8 @@ public class Post {
     @PrePersist
     public void prePersist() {
         this.edited = false;
+        this.comments = new ArrayList<>();
+        this.likes = new ArrayList<>();
         this.createdAt = LocalDateTime.now();
     }
 

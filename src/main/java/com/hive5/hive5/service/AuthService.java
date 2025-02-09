@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -83,6 +84,20 @@ public class AuthService {
         data.put("token", token);
 
         // Ako su credentials tacni generisemo i vracamo token
+        return data;
+    }
+
+    public Map<String, Object> getUserDataFromToken(Principal principal) {
+        String username = principal.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("Invalid Token!", "Token is not valid.", 400));
+
+        UserDTO userDTO = new UserDTO(user);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("user", userDTO);
+
         return data;
     }
 }

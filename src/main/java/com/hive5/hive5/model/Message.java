@@ -1,5 +1,6 @@
 package com.hive5.hive5.model;
 
+import com.hive5.hive5.model.enums.MessageStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
