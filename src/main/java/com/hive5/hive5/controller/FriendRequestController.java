@@ -1,5 +1,6 @@
 package com.hive5.hive5.controller;
 
+import com.hive5.hive5.dto.ApiResponse;
 import com.hive5.hive5.model.FriendRequest;
 import com.hive5.hive5.model.enums.FriendRequestStatus;
 import com.hive5.hive5.model.User;
@@ -9,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,53 +24,50 @@ public class FriendRequestController {
     private final FriendRequestRepository friendRequestRepository;
 
     @PostMapping("/send/{receiverId}")
-    public ResponseEntity<FriendRequest> sendFriendRequest(@PathVariable UUID receiverId, @RequestBody User sender) {
-        User receiver = new User();
-        receiver.setId(receiverId);
+    public ResponseEntity<ApiResponse> sendFriendRequest(@PathVariable UUID receiverId, Principal principal) {
+        Map<String, Object> data = friendRequestService.sendFriendRequest(receiverId, principal);
 
-        FriendRequest request = friendRequestService.sendFriendRequest(sender, receiver);
-        return ResponseEntity.ok(request);
+        ApiResponse response = new ApiResponse();
+
+        response.setMessage("Friend request successfully sent.");
+        response.setStatus("OK");
+        response.setStatusCode(200);
+        response.setData(data);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/{requestId}/accept")
-    public ResponseEntity<FriendRequest> acceptFriendRequest(@PathVariable Long requestId) {
-        Optional<FriendRequest> optionalRequest = friendRequestRepository.findById(requestId);
+    @PatchMapping("/{requestId}/accept")
+    public ResponseEntity<ApiResponse> acceptFriendRequest(@PathVariable Long requestId, Principal principal) {
+        Map<String, Object> data = friendRequestService.acceptFriendRequest(requestId, principal);
 
-        if(optionalRequest.isEmpty()) {
-            throw new IllegalStateException("There is no friend request to be accepted.");
-        }
+        ApiResponse response = new ApiResponse();
+        response.setData(data);
+        response.setStatus("OK");
+        response.setStatusCode(200);
+        response.setMessage("Friend request accepted.");
 
-        FriendRequest request = optionalRequest.get();
-
-        // TODO PROVJERITI DA LI JE RECEIVER ISTI KAO I USER KOJI PRIHVATA FRIEND REQUEST
-
-        request.setStatus(FriendRequestStatus.ACCEPTED);
-        friendRequestRepository.save(request);
-
-        return ResponseEntity.ok(request);
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("{requestId}/reject")
-    public ResponseEntity<FriendRequest> rejectFriendRequest(@PathVariable Long requestId) {
-        Optional<FriendRequest> optionalRequest = friendRequestRepository.findById(requestId);
+    @PatchMapping("{requestId}/reject")
+    public ResponseEntity<ApiResponse> rejectFriendRequest(@PathVariable Long requestId, Principal principal) {
+        Map<String, Object> data = friendRequestService.rejectFriendRequest(requestId, principal);
+        ApiResponse response = new ApiResponse();
 
-        if(optionalRequest.isEmpty()) {
-            throw new IllegalStateException("There is no friend request to be rejected.");
-        }
-
-        FriendRequest request = optionalRequest.get();
-
-        // TODO PROVJERITI DA LI JE RECEIVER ISTI KAO I USER KOJI ODBIJA FRIEND REQUEST
-        request.setStatus(FriendRequestStatus.DECLINED);
-        friendRequestRepository.save(request);
-
-        return ResponseEntity.ok(request);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("pending/{userId}")
-    public ResponseEntity<List<FriendRequest>> getPendingRequests(@PathVariable UUID userId) {
-        User receiver = new User();
-        receiver.setId(userId);
-        return ResponseEntity.ok(friendRequestService.getPendingRequests(receiver));
+    @GetMapping("pending")
+    public ResponseEntity<ApiResponse> getPendingRequests(Principal principal) {
+        Map<String, Object> data = friendRequestService.getPendingRequests(principal);
+
+        ApiResponse response = new ApiResponse();
+        response.setData(data);
+        response.setMessage("");
+        response.setStatus("OK");
+        response.setStatusCode(200);
+
+        return ResponseEntity.ok(response);
     }
 }

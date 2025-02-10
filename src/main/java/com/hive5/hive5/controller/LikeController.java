@@ -43,4 +43,30 @@ public class LikeController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/dislike/comment/{commentId}")
+    public ResponseEntity<ApiResponse> dislikeComment(@PathVariable long commentId, Principal principal) {
+        Map<String, Object> data = likeService.dislike(0, commentId, principal);
+
+        ApiResponse response = new ApiResponse();
+        response.setMessage("Successfully disliked.");
+        response.setData(data);
+        response.setStatus("OK");
+        response.setStatusCode(200);
+
+        return  ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/dislike/post/{postId}")
+    public ResponseEntity<ApiResponse> dislikePost(@PathVariable long postId, Principal principal) {
+        Map<String, Object> data = likeService.dislike(postId, 0, principal);
+
+        ApiResponse response = new ApiResponse();
+        response.setMessage("Successfully disliked.");
+        response.setData(data);
+        response.setStatus("OK");
+        response.setStatusCode(200);
+
+        return  ResponseEntity.ok(response);
+    }
 }

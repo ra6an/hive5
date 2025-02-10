@@ -69,6 +69,42 @@ public class LikeService {
         return data;
     }
 
+    public Map<String, Object> dislike(@PathVariable long postId, @PathVariable long commentId, Principal principal) {
+        String username = principal.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("User not found!", "No user with that username.", 404));
+
+        long likeId;
+
+        if(postId == 0 && commentId != 0) {
+            Comment comment = commentRepository.findById(commentId)
+                    .orElseThrow(() -> new CustomException("Comment not found!", "No comment with that ID.", 404));
+
+            Like like = likeRepository.findByUserAndComment(user, comment)
+                    .orElseThrow(() -> new CustomException("Like not found!", "Like doesn't exist.", 404));
+
+            likeId = like.getId();
+        } else if (postId != 0 && commentId == 0) {
+            Post post = postRepository.findById(postId)
+                    .orElseThrow(() -> new CustomException("Post not found!", "No post with that ID.", 404));
+
+            Like like = likeRepository.findByUserAndPost(user, post)
+                    .orElseThrow(() -> new CustomException("Like not found!", "Like doesn't exist.", 404));
+
+            likeId = like.getId();
+        } else {
+            throw new CustomException("Bad request!", "Bad Request!", 404);
+        }
+
+        likeRepository.deleteById(likeId);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("likeId", likeId);
+
+        return data;
+    }
+
     private boolean checkIfUserAlreadyLikedEntity(User user, Comment comment, Post post) {
         if(comment != null) {
             Optional<Like> alreadyExistComment = likeRepository.findByUserAndComment(user, comment);
