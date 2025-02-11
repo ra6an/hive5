@@ -25,8 +25,6 @@ public class Message {
     private User receiver;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
-    @Column(nullable = false)
-    private LocalDateTime timestamp;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MessageStatus status;

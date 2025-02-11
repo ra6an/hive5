@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -86,4 +87,18 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {return true;}
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;  // Ako su reference iste, objekti su jednaki
+        if (obj == null || getClass() != obj.getClass()) return false; // Ako su klase različite, nisu jednaki
+        User user = (User) obj;
+        return Objects.equals(id, user.id); // Poređenje samo po ID-u
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id); // Hashcode generisan na osnovu ID-a
+    }
+
 }

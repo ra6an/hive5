@@ -1,10 +1,14 @@
 package com.hive5.hive5.service;
 
+import com.hive5.hive5.dto.FriendRequest.FriendRequestDTO;
 import com.hive5.hive5.dto.User.LoginRequest;
 import com.hive5.hive5.dto.User.SignupRequest;
 import com.hive5.hive5.dto.User.UserDTO;
 import com.hive5.hive5.exception.CustomException;
+import com.hive5.hive5.model.FriendRequest;
 import com.hive5.hive5.model.User;
+import com.hive5.hive5.model.enums.FriendRequestStatus;
+import com.hive5.hive5.repository.FriendRequestRepository;
 import com.hive5.hive5.repository.UserRepository;
 import com.hive5.hive5.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,6 +29,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
+    private final FriendRequestRepository friendRequestRepository;
     private final PasswordEncoder passwordEncoder;
 
     private final AuthenticationManager authenticationManager;
@@ -77,11 +83,14 @@ public class AuthService {
 
         UserDTO userDto = new UserDTO(userObj);
 
+        Map<String, Object> initialData = getUserInitialState(userObj);
+
         String token = jwtUtil.generateToken(username);
 
         Map<String, Object> data = new HashMap<>();
         data.put("user", userDto);
         data.put("token", token);
+        data.put("initialData", initialData);
 
         // Ako su credentials tacni generisemo i vracamo token
         return data;
@@ -95,8 +104,31 @@ public class AuthService {
 
         UserDTO userDTO = new UserDTO(user);
 
+        Map<String, Object> initialData = getUserInitialState(user);
+
         Map<String, Object> data = new HashMap<>();
         data.put("user", userDTO);
+        data.put("initialData", initialData);
+
+        return data;
+    }
+
+    private Map<String, Object> getUserInitialState(User user) {
+        // Friend requests
+        List<FriendRequest> friendRequests = friendRequestRepository.findByReceiverAndStatus(user, FriendRequestStatus.PENDING);
+        List<FriendRequestDTO> friendRequestsDTO = friendRequests.stream().map(FriendRequestDTO::new).toList();
+
+        // Friends
+        List<FriendRequest> friends = friendRequestRepository.findAllFriendRequestByUser(user, FriendRequestStatus.ACCEPTED);
+        List<FriendRequestDTO> friendsDTO = friends.stream().map(FriendRequestDTO::new).toList();
+
+        // Notifications
+
+        // Messages
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("pendingFriendRequests", friendRequestsDTO);
+        data.put("friends", friendsDTO);
 
         return data;
     }
