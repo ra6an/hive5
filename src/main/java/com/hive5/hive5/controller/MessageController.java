@@ -2,6 +2,9 @@ package com.hive5.hive5.controller;
 
 import com.hive5.hive5.dto.ApiResponse;
 import com.hive5.hive5.dto.Message.CreateMessageRequest;
+import com.hive5.hive5.exception.CustomException;
+import com.hive5.hive5.model.User;
+import com.hive5.hive5.repository.UserRepository;
 import com.hive5.hive5.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +18,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MessageController {
     private final MessageService messageService;
+    private final UserRepository userRepository;
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllMessages(Principal principal) {
-        Map<String, Object> data = messageService.getAllMessages(principal);
+        String username = principal.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("Unauthorized", "You are not authorized.", 401));
+
+        Map<String, Object> data = messageService.getAllMessages(user);
 
         ApiResponse response = new ApiResponse();
         response.setStatusCode(200);

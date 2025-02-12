@@ -24,12 +24,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
 
-    public Map<String, Object> getAllMessages(Principal principal) {
-        String username = principal.getName();
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException("Unauthorized!", "You are not authorized.", 401));
-
+    public Map<String, Object> getAllMessages(User user) {
         List<User> participants = userRepository.findAllById(messageRepository.findChatParticipants(user));
 
         List<ChatDTO> chatsDTO = new ArrayList<>();
@@ -43,10 +38,33 @@ public class MessageService {
         }
 
         Map<String, Object> data = new HashMap<>();
-        data.put("message", chatsDTO);
+        data.put("messages", chatsDTO);
 
         return data;
     }
+//    public Map<String, Object> getAllMessages(Principal principal) {
+//        String username = principal.getName();
+//
+//        User user = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new CustomException("Unauthorized!", "You are not authorized.", 401));
+//
+//        List<User> participants = userRepository.findAllById(messageRepository.findChatParticipants(user));
+//
+//        List<ChatDTO> chatsDTO = new ArrayList<>();
+//
+//        for (User participant : participants) {
+//            UserDTO participantDTO = new UserDTO(participant);
+//            List<Message> messages = messageRepository.findMessagesBetweenUsers(user, participant);
+//            List<MessageDTO> messagesDTO = messages.stream().map(MessageDTO::new).toList();
+//
+//            chatsDTO.add(new ChatDTO(participantDTO, messagesDTO));
+//        }
+//
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("messages", chatsDTO);
+//
+//        return data;
+//    }
 
     public Map<String, Object> sendMessage(@RequestBody CreateMessageRequest createMessageRequest, Principal principal) {
         String username = principal.getName();

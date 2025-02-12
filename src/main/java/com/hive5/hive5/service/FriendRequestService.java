@@ -1,10 +1,13 @@
 package com.hive5.hive5.service;
 
 import com.hive5.hive5.dto.FriendRequest.FriendRequestDTO;
+import com.hive5.hive5.dto.Notification.CreateNotificationRequest;
 import com.hive5.hive5.exception.CustomException;
 import com.hive5.hive5.model.FriendRequest;
 import com.hive5.hive5.model.enums.FriendRequestStatus;
 import com.hive5.hive5.model.User;
+import com.hive5.hive5.model.enums.NotificationType;
+import com.hive5.hive5.model.enums.TargetType;
 import com.hive5.hive5.repository.FriendRequestRepository;
 import com.hive5.hive5.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import java.util.UUID;
 public class FriendRequestService {
     private final FriendRequestRepository friendRequestRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     public Map<String, Object> sendFriendRequest(@PathVariable UUID receiverId, Principal principal) {
         String username = principal.getName();
@@ -32,7 +36,7 @@ public class FriendRequestService {
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new CustomException("Bad Request!", "There is no user in DB with that ID.", 404));
 
-        if(friendRequestRepository.findBySenderAndReceiver(user, receiver).isPresent()) {
+        if(friendRequestRepository.findBySenderAndReceiverAndStatus(user, receiver, FriendRequestStatus.PENDING).isPresent()) {
             throw new IllegalStateException("Friend request already exists.");
         }
 
@@ -105,6 +109,21 @@ public class FriendRequestService {
 
         Map<String, Object> data = new HashMap<>();
         data.put("data", frDTO);
+
+        // Kreiramo notifikaciju ako je friend request acceptan
+        if(frs.equals(FriendRequestStatus.ACCEPTED)) {
+            CreateNotificationRequest createNotificationRequest = new CreateNotificationRequest();
+            createNotificationRequest.setReceiver(fr.getSender());
+            createNotificationRequest.setSender(user);
+            createNotificationRequest.setType(NotificationType.FRIEND_REQUEST_ACCEPTED);
+            createNotificationRequest.setTargetType(TargetType.FRIEND_REQUEST);
+            createNotificationRequest.setTargetId(fr.getId());
+            createNotificationRequest.setSecondaryTargetId(null);
+
+            Map<String, Object> notificationData = notificationService.createNotification(createNotificationRequest);
+
+            // TODO :: nakon implementacije socketa poslati useru notifikaciju.
+        }
 
         return data;
     }

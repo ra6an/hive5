@@ -1,11 +1,14 @@
 package com.hive5.hive5.service;
 
 import com.hive5.hive5.dto.Like.LikeDTO;
+import com.hive5.hive5.dto.Notification.CreateNotificationRequest;
 import com.hive5.hive5.exception.CustomException;
 import com.hive5.hive5.model.Comment;
 import com.hive5.hive5.model.Like;
 import com.hive5.hive5.model.Post;
 import com.hive5.hive5.model.User;
+import com.hive5.hive5.model.enums.NotificationType;
+import com.hive5.hive5.model.enums.TargetType;
 import com.hive5.hive5.repository.CommentRepository;
 import com.hive5.hive5.repository.LikeRepository;
 import com.hive5.hive5.repository.PostRepository;
@@ -27,6 +30,7 @@ public class LikeService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final NotificationService notificationService;
 
     public Map<String, Object> like(@PathVariable long commentId, @PathVariable long postId, Principal principal) {
         String username = principal.getName();
@@ -35,6 +39,9 @@ public class LikeService {
 
         Like like = new Like();
         like.setUser(user);
+
+        CreateNotificationRequest createNotificationRequest = new CreateNotificationRequest();
+        createNotificationRequest.setSender(user);
 
         if(commentId != 0) {
             like.setPost(null);
@@ -47,6 +54,11 @@ public class LikeService {
 
             like.setComment(comment);
             addLikeToEntity(like, comment, null);
+
+            createNotificationRequest.setReceiver(comment.getUser());
+            createNotificationRequest.setType(NotificationType.LIKE);
+            createNotificationRequest.setTargetType(TargetType.COMMENT);
+            createNotificationRequest.setTargetId(comment.getId());
         } else if (postId != 0) {
             like.setComment(null);
             Post post = postRepository.findById(postId)
@@ -58,6 +70,17 @@ public class LikeService {
 
             like.setPost(post);
             addLikeToEntity(like, null, post);
+
+            createNotificationRequest.setReceiver(post.getUser());
+            createNotificationRequest.setType(NotificationType.LIKE);
+            createNotificationRequest.setTargetType(TargetType.POST);
+            createNotificationRequest.setTargetId(post.getId());
+        }
+
+        if(!createNotificationRequest.getSender().getId().equals(createNotificationRequest.getReceiver().getId())) {
+            Map<String, Object> notificationData = notificationService.createNotification(createNotificationRequest);
+
+            // TODO WEBSOCKET:: poslati receiveru notifikaciju
         }
 
         likeRepository.save(like);

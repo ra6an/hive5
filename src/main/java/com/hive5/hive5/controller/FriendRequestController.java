@@ -53,7 +53,12 @@ public class FriendRequestController {
     @PatchMapping("{requestId}/reject")
     public ResponseEntity<ApiResponse> rejectFriendRequest(@PathVariable Long requestId, Principal principal) {
         Map<String, Object> data = friendRequestService.rejectFriendRequest(requestId, principal);
+
         ApiResponse response = new ApiResponse();
+        response.setData(data);
+        response.setStatus("OK");
+        response.setStatusCode(200);
+        response.setMessage("Friend request rejected.");
 
         return ResponseEntity.ok(response);
     }

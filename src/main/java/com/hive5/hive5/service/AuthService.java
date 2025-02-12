@@ -1,14 +1,17 @@
 package com.hive5.hive5.service;
 
 import com.hive5.hive5.dto.FriendRequest.FriendRequestDTO;
+import com.hive5.hive5.dto.Notification.NotificationDTO;
 import com.hive5.hive5.dto.User.LoginRequest;
 import com.hive5.hive5.dto.User.SignupRequest;
 import com.hive5.hive5.dto.User.UserDTO;
 import com.hive5.hive5.exception.CustomException;
 import com.hive5.hive5.model.FriendRequest;
+import com.hive5.hive5.model.Notification;
 import com.hive5.hive5.model.User;
 import com.hive5.hive5.model.enums.FriendRequestStatus;
 import com.hive5.hive5.repository.FriendRequestRepository;
+import com.hive5.hive5.repository.NotificationRepository;
 import com.hive5.hive5.repository.UserRepository;
 import com.hive5.hive5.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,9 @@ import java.util.Optional;
 public class AuthService {
     private final UserRepository userRepository;
     private final FriendRequestRepository friendRequestRepository;
+    private final NotificationRepository notificationRepository;
+    private final MessageService messageService;
+
     private final PasswordEncoder passwordEncoder;
 
     private final AuthenticationManager authenticationManager;
@@ -123,12 +129,17 @@ public class AuthService {
         List<FriendRequestDTO> friendsDTO = friends.stream().map(FriendRequestDTO::new).toList();
 
         // Notifications
+        List<Notification> notifications = notificationRepository.findByReceiver(user);
+        List<NotificationDTO> notificationsDTO = notifications.stream().map(NotificationDTO::new).toList();
 
         // Messages
+        Map<String, Object> messages = messageService.getAllMessages(user);
 
         Map<String, Object> data = new HashMap<>();
         data.put("pendingFriendRequests", friendRequestsDTO);
         data.put("friends", friendsDTO);
+        data.put("notifications", notificationsDTO);
+        data.put("messages", messages.get("messages"));
 
         return data;
     }
