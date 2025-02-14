@@ -154,6 +154,43 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
+			<!-- Moj plugin za generisanje keystore-a -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<exec executable="keytool">
+									<arg value="-genkeypair"/>
+									<arg value="-keyalg"/>
+									<arg value="RSA"/>
+									<arg value="-keysize"/>
+									<arg value="2048"/>
+									<arg value="-storetype"/>
+									<arg value="PKCS12"/>
+									<arg value="-keystore"/>
+									<arg value="src/main/resources/keystore.p12"/>
+									<arg value="-storepass"/>
+									<arg value="yourKeystorePassword"/>
+									<arg value="-alias"/>
+									<arg value="yourAlias"/>
+									<arg value="-dname"/>
+									<arg value="CN=localhost, OU=Dev, O=MyCompany, L=City, S=State, C=Country"/>
+									<arg value="-validity"/>
+									<arg value="365"/>
+								</exec>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 

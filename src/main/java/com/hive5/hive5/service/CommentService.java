@@ -29,6 +29,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final NotificationService notificationService;
+    private final WSNotificationService wsNotificationService;
 
     public Map<String, Object> getPostByCommentId(@PathVariable long commentId, Principal principal) {
         String username = principal.getName();
@@ -44,8 +45,6 @@ public class CommentService {
         data.put("data", postDTO);
 
         return data;
-//        Post post = postRepository.findById(comment.getPost().getId())
-//                .orElseThrow(() -> new CustomException("Bad Request!", "Post not found.", 404));
     }
 
     public Map<String, Object> createComment(CreateCommentRequest createCommentRequest, Principal principal) {
@@ -109,6 +108,7 @@ public class CommentService {
             Map<String, Object> notificationData = notificationService.createNotification(createNotificationRequest);
 
             // TODO WEBSOCKET:: poslati receiveru notifikaciju
+            wsNotificationService.sendDataViaWS(createNotificationRequest.getReceiver().getId(), notificationData, WSType.NOTIFICATION);
         }
 
         CommentDTO commentDTO = new CommentDTO(comment);
