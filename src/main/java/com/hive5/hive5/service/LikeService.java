@@ -32,6 +32,8 @@ public class LikeService {
     private final PostRepository postRepository;
     private final NotificationService notificationService;
 
+    private final WSNotificationService wsNotificationService;
+
     public Map<String, Object> like(@PathVariable long commentId, @PathVariable long postId, Principal principal) {
         String username = principal.getName();
         User user = userRepository.findByUsername(username)
@@ -81,6 +83,7 @@ public class LikeService {
             Map<String, Object> notificationData = notificationService.createNotification(createNotificationRequest);
 
             // TODO WEBSOCKET:: poslati receiveru notifikaciju
+            wsNotificationService.sendDataViaWS(createNotificationRequest.getReceiver().getId(), notificationData, WSType.NOTIFICATION);
         }
 
         likeRepository.save(like);

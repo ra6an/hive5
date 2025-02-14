@@ -34,3 +34,6 @@ build/
 
 ### ENV Files ###
 .env
+
+### p12 ###
+src/main/resources/*.p12

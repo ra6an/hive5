@@ -124,6 +124,10 @@ public class AuthService {
         List<FriendRequest> friendRequests = friendRequestRepository.findByReceiverAndStatus(user, FriendRequestStatus.PENDING);
         List<FriendRequestDTO> friendRequestsDTO = friendRequests.stream().map(FriendRequestDTO::new).toList();
 
+        // Sent friend requests
+        List<FriendRequest> sentFriendRequests = friendRequestRepository.findBySenderAndStatus(user, FriendRequestStatus.PENDING);
+        List<FriendRequestDTO> sentFriendRequestsDTO = sentFriendRequests.stream().map(FriendRequestDTO::new).toList();
+
         // Friends
         List<FriendRequest> friends = friendRequestRepository.findAllFriendRequestByUser(user, FriendRequestStatus.ACCEPTED);
         List<FriendRequestDTO> friendsDTO = friends.stream().map(FriendRequestDTO::new).toList();
@@ -137,6 +141,7 @@ public class AuthService {
 
         Map<String, Object> data = new HashMap<>();
         data.put("pendingFriendRequests", friendRequestsDTO);
+        data.put("sentFriendRequests", sentFriendRequestsDTO);
         data.put("friends", friendsDTO);
         data.put("notifications", notificationsDTO);
         data.put("messages", messages.get("messages"));

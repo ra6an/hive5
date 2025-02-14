@@ -27,6 +27,8 @@ public class FriendRequestService {
     private final UserRepository userRepository;
     private final NotificationService notificationService;
 
+    private final WSNotificationService wsNotificationService;
+
     public Map<String, Object> sendFriendRequest(@PathVariable UUID receiverId, Principal principal) {
         String username = principal.getName();
 
@@ -36,8 +38,8 @@ public class FriendRequestService {
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new CustomException("Bad Request!", "There is no user in DB with that ID.", 404));
 
-        if(friendRequestRepository.findBySenderAndReceiverAndStatus(user, receiver, FriendRequestStatus.PENDING).isPresent()) {
-            throw new IllegalStateException("Friend request already exists.");
+        if(!friendRequestRepository.findByUsersAndStatus(user, receiver, FriendRequestStatus.DECLINED).isEmpty()) {
+            throw new CustomException("Bad Request", "Friend request already exists.", 404);
         }
 
         FriendRequest friendRequest = FriendRequest.builder()
@@ -53,6 +55,8 @@ public class FriendRequestService {
         Map<String, Object> data = new HashMap<>();
 
         data.put("request", frDTO);
+
+        wsNotificationService.sendDataViaWS(receiverId, data, WSType.FRIENDREQUEST);
 
         return data;
     }
@@ -121,8 +125,10 @@ public class FriendRequestService {
             createNotificationRequest.setSecondaryTargetId(null);
 
             Map<String, Object> notificationData = notificationService.createNotification(createNotificationRequest);
+            notificationData.put("friendRequestData", frDTO);
 
             // TODO :: nakon implementacije socketa poslati useru notifikaciju.
+            wsNotificationService.sendDataViaWS(createNotificationRequest.getReceiver().getId(), notificationData, WSType.NOTIFICATION);
         }
 
         return data;

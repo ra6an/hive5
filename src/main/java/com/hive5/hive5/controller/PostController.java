@@ -18,9 +18,22 @@ import java.util.UUID;
 public class PostController {
     private final PostService postService;
 
-    @GetMapping("/")
-    public ResponseEntity<ApiResponse> getPosts() {
-        Map<String, Object> postsData = postService.getPosts();
+    @GetMapping("/explore")
+    public ResponseEntity<ApiResponse> getPosts(Principal principal) {
+        Map<String, Object> postsData = postService.getPosts("explore", principal);
+
+        ApiResponse response = new ApiResponse();
+        response.setMessage("");
+        response.setStatus("OK");
+        response.setStatusCode(200);
+        response.setData(postsData);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/home")
+    public ResponseEntity<ApiResponse> getPostsHome(Principal principal) {
+        Map<String, Object> postsData = postService.getPosts("home", principal);
 
         ApiResponse response = new ApiResponse();
         response.setMessage("");

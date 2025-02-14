@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getError(), ex.getMessage(), ex.getStatusCode());
-        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ex.getStatusCode()));
+        var errorResponse = new ErrorResponse(ex.getError(), ex.getMessage(), ex.getStatusCode());
+        return ResponseEntity.status(ex.getStatusCode()).body(errorResponse);
     }
 
     @ExceptionHandler(InvalidStatusException.class)
