@@ -21,6 +21,7 @@ import java.util.List;
 public class PostDTO {
     private long id;
     private String content;
+    private String image;
     private UserDTO user;
     private String status;
     private LocalDateTime createdAt;
@@ -30,6 +31,7 @@ public class PostDTO {
     public PostDTO(Post post) {
         this.id = post.getId();
         this.content = post.getContent();
+        this.image = post.getImage();
         this.createdAt = post.getCreatedAt();
         this.status = post.getStatus().name();
         this.user = (post.getUser() != null) ? new UserDTO(post.getUser()) : null;

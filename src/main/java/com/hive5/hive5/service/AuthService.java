@@ -98,7 +98,6 @@ public class AuthService {
         data.put("token", token);
         data.put("initialData", initialData);
 
-        // Ako su credentials tacni generisemo i vracamo token
         return data;
     }
 
@@ -115,6 +114,33 @@ public class AuthService {
         Map<String, Object> data = new HashMap<>();
         data.put("user", userDTO);
         data.put("initialData", initialData);
+
+        return data;
+    }
+
+    public Map<String, Object> updateUser(@RequestBody LoginRequest loginRequest, Principal principal) {
+        String username = principal.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("Unauthorized!", "You are not authorized.", 401));
+
+        user.setUsername(loginRequest.getUsername());
+
+        userRepository.save(user);
+
+        UserDTO userDTO = new UserDTO(user);
+
+        Map<String, Object> initialData = getUserInitialState(user);
+
+        String token = jwtUtil.generateToken(user.getUsername());
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("user", userDTO);
+        data.put("token", token);
+        data.put("initialData", initialData);
+
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("user", userDTO);
 
         return data;
     }
