@@ -10,6 +10,14 @@
   docker-compose up --build
   ```
 
-3 Pokrenite aplikaciju
+3 Pokrenite komandu za build aplikacije
+  ```bash
+  mvn clean package
+  ```
+
+4 Pokrenite aplikaciju (/target)
+  ```bash
+  java -jar ./<ime_buildanog_filea_u_target_folderu>.jar
+  ```
 
 ## Frontend mozete klonirati sa https://github.com/ra6an/hive5front
