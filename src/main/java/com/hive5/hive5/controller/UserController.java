@@ -56,4 +56,17 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/find-new-friends")
+    public ResponseEntity<ApiResponse> findNewFriends(Principal principal) {
+        Map<String,Object> data = userService.findNewUsers(principal);
+
+        ApiResponse response = new ApiResponse();
+        response.setStatus("OK");
+        response.setStatusCode(200);
+        response.setMessage("");
+        response.setData(data);
+
+        return ResponseEntity.ok(response);
+    }
 }
