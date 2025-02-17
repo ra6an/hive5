@@ -1,13 +1,8 @@
 # Step 1: Build stage
-FROM eclipse-temurin:17-jdk AS build
+FROM maven:3:8:5-openjdk-17 AS build
 WORKDIR /app
-
-# Kopiraj pom.xml i preuzmi zavisnosti, kao i .mvn direktorijum
 COPY . .
-
-# Kopiraj ostatak koda
-COPY src ./src
-RUN ./mvnw clean package -DskipTests
+RUN ./mvn clean package -DskipTests
 
 # Step 2: Runtime stage
 FROM eclipse-temurin:17-jre-alpine
