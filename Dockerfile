@@ -4,6 +4,8 @@ WORKDIR /app
 
 # Kopiraj pom.xml i preuzmi zavisnosti, kao i .mvn direktorijum
 COPY pom.xml .
+COPY mvnw .
+COPY .mvn .mvn
 RUN ./mvnw dependency:go-offline
 
 # Kopiraj ostatak koda
