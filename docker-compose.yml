@@ -1,16 +1,15 @@
+version: '3'
 services:
-  postgres:
-    image: postgres:15
-    container_name: hive5_postgres
-    restart: always
-    environment:
-      POSTGRES_USER: ra6an
-      POSTGRES_PASSWORD: l4gkR4sd6kK4l12aS
-      POSTGRES_DB: hive5_db
+  backend:
+    build: .
     ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ${API_PORT}
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_EXPIRATION_TIME=${JWT_EXPIRATION_TIME}
 
 volumes:
   postgres_data:

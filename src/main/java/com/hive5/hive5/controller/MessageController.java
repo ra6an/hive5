@@ -14,7 +14,7 @@ import java.security.Principal;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/messages")
+@RequestMapping("/messages")
 @RequiredArgsConstructor
 public class MessageController {
     private final MessageService messageService;
