@@ -33,7 +33,7 @@ build/
 .vscode/
 
 ### ENV Files ###
-#.env
+.env
 
 ### p12 ###
 #src/main/resources/*.p12
