@@ -1,8 +1,20 @@
 # Step 1: Build stage
 FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
-COPY . .
-RUN ./mvn clean package -DskipTests
+
+# Kopiraj samo pom.xml i maven wrapper kako bi se izbegla nepotrebna kopiranja
+COPY pom.xml .
+COPY mvnw .
+COPY .mvn .mvn
+
+# Preuzmi zavisnosti
+RUN ./mvnw dependency:go-offline
+
+# Kopiraj ostatak koda
+COPY src ./src
+
+# Izgradnja aplikacije (skipTests se koristi za izbegavanje pokretanja testova tokom build-a)
+RUN ./mvnw clean package -DskipTests
 
 # Step 2: Runtime stage
 FROM eclipse-temurin:17-jre-alpine
